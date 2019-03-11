@@ -1,7 +1,23 @@
 #include "vehicle.h"
 #include "controller.h"
 #include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
 #include <math.h>
+
+vehicle * create_vehicle(double * starting_position, int num_waypoints, double ** offset_waypoints) {
+    srand(time(0))
+    new_vehicle = malloc(sizeof(vehicle));
+    double a = 2*M_PI;
+    double x = (double) (rand()%99);
+    double y = (double) (rand() % 99);
+    double theta = ((double)rand()/(double)(RAND_MAX)) * a - M_PI;
+    double values[3] = {x, y, theta};
+    for (int i = 0; i < 3; i++) {
+        new_vehicle->position[i] = values[i];
+        //new line
+    }
+}
 
 double max (double a, double b) {
 	return (a < b) ? b : a;
@@ -50,7 +66,7 @@ void set_velocity   (struct t_vehicle * v,double * values) {
 				else {
 					v-velocity[i] = (double) 10.0;
 				}
-				break;
+                break;
 		}
 	}
 }
