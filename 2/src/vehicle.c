@@ -6,17 +6,43 @@
 #include <math.h>
 
 vehicle * create_vehicle(double * starting_position, int num_waypoints, double ** offset_waypoints) {
-    srand(time(0))
-    new_vehicle = malloc(sizeof(vehicle));
+//    srand(time(0))
+    
+    //Allocating memory
+    vehicle * new_vehicle = malloc(sizeof(vehicle));
+    /* Randomize initial position and heading
     double a = 2*M_PI;
     double x = (double) (rand()%99);
     double y = (double) (rand() % 99);
-    double theta = ((double)rand()/(double)(RAND_MAX)) * a - M_PI;
+    double theta = 0.0; //((double)rand()/(double)(RAND_MAX)) * a - M_PI;
     double values[3] = {x, y, theta};
+     */
+    
+    //defining position
     for (int i = 0; i < 3; i++) {
-        new_vehicle->position[i] = values[i];
+        new_vehicle->position[i] = starting_position[i];
         //new line
     }
+    //other definitions
+    new_vehicle->num_waypoints = num_waypoints;
+    new_vehicle->target_waypoints = malloc((num_waypoints + 1) * 2 * sizeof(double));
+    new_vehicle->target_waypoints[0] = malloc(2*sizeof(double));
+    new_vehicle->target_waypoints[0][0] = starting_position[0];
+    new_vehicle->target_waypoints[0][1] = starting_position[1];
+    for (int i = 1; i < num_waypoints+1; i++) {
+        new_vehicle->target_waypoints[i] = malloc(2 * sizeof(double));
+        new_vehicle->target_waypoints[i][0] = new_vehicle->target_waypoints[i-1][0] + offset_waypoints[i][0];
+        new_vehicle->target_waypoints[i][1] = new_vehicle->target_waypoints[i-1][1] + offset_waypoints[i][1];
+    }
+    
+    //function definitions
+    new_vehicle->current_waypoint = (new_vehicle->target_waypoints[0]);
+    new_vehicle->set_position = set_position;
+    new_vehicle->set_velocity = set_velocity;
+    new_vehicle->control_vehicle = control_vehicle;
+    new_vehicle->update_state = update_state;
+    
+    return new_vehicle;
 }
 
 double max (double a, double b) {
@@ -24,7 +50,7 @@ double max (double a, double b) {
 }
 
 void set_position   (struct t_vehicle * v,double * values) {
-	for (i=0; i < 3; i++) {
+	for (int i=0; i < 3; i++) {
 		//v->position[i] = *(values+i);
 		switch (i) {
 			case 2: //check angle first because x, y have same constraints
@@ -32,7 +58,7 @@ void set_position   (struct t_vehicle * v,double * values) {
 					v->position[i] = max(-M_PI, *(values+i));
 				}
 				else {
-					v-position[i] = M_PI;
+					v->position[i] = M_PI;
 				}
 				break;
 			default: 
@@ -40,7 +66,7 @@ void set_position   (struct t_vehicle * v,double * values) {
 					v->position[i] = max((double) 0.0, *(values+i));
 				}
 				else {
-					v-position[i] = (double) 100.0;
+					v->position[i] = (double) 100.0;
 				}
 				break;
 		}
@@ -48,7 +74,7 @@ void set_position   (struct t_vehicle * v,double * values) {
 }
 
 void set_velocity   (struct t_vehicle * v,double * values) {
-	for (i=0; i < 3; i++) {
+	for (int i=0; i < 3; i++) {
 		//v->velocity[i] = *(values+i);
 		switch (i) {
 			case 2: //check angular velocity first because x_dot, y_dot have same constraints
@@ -56,7 +82,7 @@ void set_velocity   (struct t_vehicle * v,double * values) {
 					v->velocity[i] = max(-M_PI_4, *(values+i));
 				}
 				else {
-					v-velocity[i] = M_PI_4;
+					v->velocity[i] = M_PI_4;
 				}
 				break;
 			default: 
@@ -64,7 +90,7 @@ void set_velocity   (struct t_vehicle * v,double * values) {
 					v->velocity[i] = max((double) 5.0, *(values+i));
 				}
 				else {
-					v-velocity[i] = (double) 10.0;
+					v->velocity[i] = (double) 10.0;
 				}
                 break;
 		}
@@ -72,11 +98,11 @@ void set_velocity   (struct t_vehicle * v,double * values) {
 }
 
 void control_vehicle(struct t_vehicle * v) {
-	control = get_proportional_waypoint_control(struct t_vehicle * v);
+	control control_obj = get_proportional_waypoint_control(v);
 	double theta = v->position[2];
-	double x_dot = control->speed * cos(theta);
-	double y_dot = control->speed * sin(theta);
-	double values[3] = {x_dot, y_dot, control->angular_velocity};
+	double x_dot = control_obj.speed * cos(theta);
+	double y_dot = control_obj.speed * sin(theta);
+	double values[3] = {x_dot, y_dot, control_obj.angular_velocity};
 	v->set_velocity(v, values);
 }
 
