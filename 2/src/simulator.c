@@ -24,7 +24,7 @@ simulator * create_simulator(){
         sim->offset_waypoints[i][1] = sim->radius * sin( i * 2 * M_PI / (sim->num_waypoints));
     }
     // simulator settings
-    sim->max_time = 100.0;
+    sim->max_time = 200.0;
     sim->current_time = 0.0;
     sim->time_increment = 0.01;
     return sim;
