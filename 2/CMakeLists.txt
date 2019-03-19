@@ -41,3 +41,4 @@ add_test(TestController2 test_controller pass) # should pass
 add_test(Test_Controller_limit test_controller controller1)
 add_test(Test_Controller_negative test_controller controller2)
 add_test(Test_Controller_zero test_controller controller3)
+add_test(Test_Update_State test_controller updatestate)

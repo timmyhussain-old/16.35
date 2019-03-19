@@ -4,7 +4,9 @@
 #include <stdlib.h>
 #include <math.h>
 
-int test_controller();
+int test_controller(int i);
+
+int test_update();
 
 int main (int argc, char ** argv) {
     // test controller functionality
@@ -19,6 +21,10 @@ int main (int argc, char ** argv) {
     }
     else if (strcmp(argv[1], "controller3") == 0) {
       int res = test_controller(0);
+      return res;
+    }
+    else if (strcmp(argv[1], "updatestate") == 0) {
+      int res = test_update();
       return res;
     }
     else return 0; // correct
@@ -46,6 +52,18 @@ int test_controller(int i) {
     case 0:
       if (control.angular_velocity == 0) return 0;
       return -1;
+  }
+
+  int test_update() {
+    double starting_pos[3] = {50, 99, M_PI_2};
+    double ** offset = malloc(sizeof(double*));
+    offset[0] = malloc(2*sizeof(double));
+    offset[0][0] = 10;
+    offset[0][1] = 20;
+    vehicle * v = create_vehicle(starting_pos, 1, offset);
+    // v->update_state(v, 0.1);
+    // if (v->position[1] == 100.0) return 0;
+    return -1;
   }
 
   // if (control.angular_velocity > 0) {
