@@ -20,6 +20,11 @@ add_definitions(-DPORTNUM=1635 -DIP="127.0.0.1")
 # create the executable
 add_executable(main src/main.c ${SimulatorFiles})
 target_link_libraries(main m)
+#add_executable(test_controller tests/test_controller.c ${SimulatorFiles})
+#target_link_libraries(test_controller m) 
+
+#add_test (TestController1 test_controller fail) 
+#add_test (TestController2 test_controller pass)
 
 # note that we would normally create a library for the simulator files and
 # link our tests and main function against that. for this assignment, to keep
@@ -33,3 +38,6 @@ target_link_libraries(test_controller m)
 ## this created the executable, now lets add a test
 add_test(TestController1 test_controller fail) # should fail
 add_test(TestController2 test_controller pass) # should pass
+add_test(Test_Controller_limit test_controller controller1)
+add_test(Test_Controller_negative test_controller controller2)
+add_test(Test_Controller_zero test_controller controller3)
