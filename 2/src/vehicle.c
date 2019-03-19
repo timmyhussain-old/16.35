@@ -25,16 +25,16 @@ vehicle * create_vehicle(double * starting_position, int num_waypoints, double *
     }
     //other definitions
     new_vehicle->num_waypoints = num_waypoints;
-    new_vehicle->target_waypoints = malloc((num_waypoints + 1) * 2 * sizeof(double));
+    new_vehicle->target_waypoints = malloc((num_waypoints) * 2 * sizeof(double));
     new_vehicle->target_waypoints[0] = malloc(2*sizeof(double));
     new_vehicle->target_waypoints[0][0] = starting_position[0] + offset_waypoints[0][0];
     new_vehicle->target_waypoints[0][1] = starting_position[1] + offset_waypoints[0][1];
     // printf("tw x: %f\n", new_vehicle->target_waypoints[0][0]);
     // printf("tw y: %f\n\n", new_vehicle->target_waypoints[0][1]);
-    for (int i = 1; i < num_waypoints+1; i++) {
+    for (int i = 0; i < num_waypoints; i++) {
         new_vehicle->target_waypoints[i] = malloc(2 * sizeof(double));
-        new_vehicle->target_waypoints[i][0] = new_vehicle->target_waypoints[i-1][0] + offset_waypoints[i][0];
-        new_vehicle->target_waypoints[i][1] = new_vehicle->target_waypoints[i-1][1] + offset_waypoints[i][1];
+        new_vehicle->target_waypoints[i][0] = new_vehicle->position[0] + offset_waypoints[i][0];//target_waypoints[i-1][0] + offset_waypoints[i][0];
+        new_vehicle->target_waypoints[i][1] = new_vehicle->position[1] + offset_waypoints[i][1];//target_waypoints[i-1][1] + offset_waypoints[i][1];
         // printf("tw x: %f\n", new_vehicle->target_waypoints[i][0]);
         // printf("tw y: %f\n\n", new_vehicle->target_waypoints[i][1]);
     }
@@ -61,17 +61,17 @@ double max (double a, double b) {
 
 void set_position   (struct t_vehicle * v, double * values) {
 	for (int i=0; i < 3; i++) {
-		//v->position[i] = *(values+i);
+		// v->position[i] = *(values+i);
 		switch (i) {
 			case 2: //check angle first because x, y have same constraints
-				if ((*(values + i) < M_PI) && (*(values + i) > -M_PI)) {
+				if ((*(values + i) < M_PI) && (*(values + i) > - M_PI)) {
 					v->position[i] = *(values+i);
 				}
-				else if (*(values + i) > M_PI) {
-					v->position[i] = 2*M_PI - *(values+i);
+				else if (*(values + i) >= M_PI) {
+					v->position[i] = -(2*M_PI - *(values+i));
 				}
         else if (*(values + i) < -M_PI) {
-          v->position[i] = 0 - *(values+i);
+          v->position[i] = 2 * M_PI + *(values+i);
         }
 				break;
 			default:
@@ -79,10 +79,10 @@ void set_position   (struct t_vehicle * v, double * values) {
 					v->position[i] = *(values+i);
 				}
 				else if (*(values + i) > (double) 100.0) {
-					v->position[i] = *(values+i) - (double) 100.0;
+					v->position[i] = (double) 100.0; //*(values+i) - (double) 100.0;
 				}
         else if (*(values + i) < 0.0) {
-          v->position[i] = (double) 0.0 - *(values + i);
+          v->position[i] = (double) 0.0; //(double) 100.0 + *(values + i);
          }
 				break;
 		}
@@ -115,7 +115,7 @@ void set_velocity   (struct t_vehicle * v,double * values) {
 
 void control_vehicle(struct t_vehicle * v) {
 	control control_obj = get_proportional_waypoint_control(v);
-	double theta = v->position[2]; //control_obj.angular_velocity;
+	double theta = v->position[2]; //double theta = control_obj.angular_velocity;
   // printf("speed: %f\n", control_obj.speed);
   // printf("theta: %f\n", theta);
 	double x_dot = control_obj.speed * cos(theta);
