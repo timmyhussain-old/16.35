@@ -14,10 +14,10 @@ control get_proportional_waypoint_control(struct t_vehicle * vehicle) {
 	double x = vehicle->position[0];
 	double y = vehicle->position[1];
 	
-	// if ((fabs(x-vehicle->current_waypoint[0]) < (double ) 3) && fabs(y-vehicle->current_waypoint[1]) < (double) 3) {
-  //   vehicle->current_waypoint = vehicle->target_waypoints[vehicle->current_waypoint_idx];
-  //   vehicle->current_waypoint_idx++;
-  // }
+	if ((fabs(x-vehicle->current_waypoint[0]) < (double ) 3) && fabs(y-vehicle->current_waypoint[1]) < (double) 3) {
+    vehicle->current_waypoint = vehicle->target_waypoints[vehicle->current_waypoint_idx];
+    vehicle->current_waypoint_idx++;
+  }
 		// printf("x: %f\n", vehicle->current_waypoint[0]);
 		// printf("y: %f\n", vehicle->current_waypoint[1]);
 		control * new_control = malloc(sizeof(control));
