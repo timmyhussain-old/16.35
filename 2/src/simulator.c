@@ -5,6 +5,8 @@
 #include <math.h>
 #include <unistd.h>
 #include <stdio.h>
+#include <time.h>
+#include <pthread.h>
 simulator * create_simulator(){
     // initialization
     simulator * sim = malloc(sizeof(simulator));
@@ -24,7 +26,7 @@ simulator * create_simulator(){
         sim->offset_waypoints[i][1] = sim->radius * sin( i * 2 * M_PI / (sim->num_waypoints));
     }
     // simulator settings
-    sim->max_time = 200.0;
+    sim->max_time = 20.0;
     sim->current_time = 0.0;
     sim->time_increment = 0.01;
     return sim;
@@ -33,7 +35,11 @@ void run(struct t_simulator * sim){
     open_server(IP,PORTNUM);
     sim->current_time = 0.0;
     double time_vehicle_message = 0.0;
+    int ix = 0;
+    double avg_time = 0;
     while (sim->current_time < sim->max_time) {
+      clock_t t;
+      t = clock();
         printf("\rt = %f",sim->current_time);
         time_vehicle_message += sim->time_increment;
         sim->current_time += sim->time_increment;
@@ -46,6 +52,49 @@ void run(struct t_simulator * sim){
             v->update_state(v,sim->time_increment); // delta t
         }
         usleep(sim->time_increment*1e6); // sleep for roughly the time increment so we get quasi-realtime behavior
+        t = clock() - t;
+        double time_taken = ((double)t)/CLOCKS_PER_SEC;
+        avg_time = ((avg_time * ix) + time_taken)/(ix+1);
+        ix++;
+        printf("Average time taken: %f\n\n", avg_time);
     }
     close_server();
+}
+struct v_time {
+  vehicle * vehicle;
+  double timestep;
+}
+
+void entry_function(v_time v_time) {
+  update_state(v_time->v, v_time.timestep);
+}
+
+void run_threaded(struct t_simulator * sim) {
+  while (sim->current_time < sim->max_time) {
+    clock_t t;
+    t = clock();
+      printf("\rt = %f",sim->current_time);
+      time_vehicle_message += sim->time_increment;
+      sim->current_time += sim->time_increment;
+      if (time_vehicle_message > 1.0/sim->vehicle_update_rate) {
+          send_vehicles(sim->n_vehicles,sim->vehicles);
+          time_vehicle_message = 0.0;
+      }
+
+      for (vehicle * v = sim->vehicles; v < sim->vehicles + sim->n_vehicles; v++){
+        pthread_t t
+        v_time * v_time;
+        v_time->vehicle = v;
+        v_time = sim->time_increment;
+
+
+      }
+
+      usleep(sim->time_increment*1e6); // sleep for roughly the time increment so we get quasi-realtime behavior
+      t = clock() - t;
+      double time_taken = ((double)t)/CLOCKS_PER_SEC;
+      avg_time = ((avg_time * ix) + time_taken)/(ix+1);
+      ix++;
+      printf("Average time taken: %f\n\n", avg_time);
+  }
 }
