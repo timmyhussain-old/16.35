@@ -11,6 +11,7 @@ simulator * create_simulator(){
     // initialization
     simulator * sim = malloc(sizeof(simulator));
     sim->run = &run;
+    // sim->run_threaded = &run_threaded;
     sim->n_vehicles = 0;
     // update rate for display server
     sim->vehicle_update_rate = 25; // hz
@@ -60,16 +61,23 @@ void run(struct t_simulator * sim){
     }
     close_server();
 }
-struct v_time {
+
+typedef struct v_time{
   vehicle * vehicle;
   double timestep;
-}
+} v_time;
 
-void entry_function(v_time v_time) {
-  update_state(v_time->v, v_time.timestep);
+void * entry_function(void * v_time_ptr) {
+  v_time * vptr = (v_time *) v_time_ptr;
+  update_state(vptr->vehicle, vptr->timestep);
 }
 
 void run_threaded(struct t_simulator * sim) {
+  open_server(IP,PORTNUM);
+  sim->current_time = 0.0;
+  double time_vehicle_message = 0.0;
+  int ix = 0;
+  double avg_time = 0;
   while (sim->current_time < sim->max_time) {
     clock_t t;
     t = clock();
@@ -81,14 +89,22 @@ void run_threaded(struct t_simulator * sim) {
           time_vehicle_message = 0.0;
       }
 
+      pthread_t thr[sim->n_vehicles];
+      int i = 0;
+
       for (vehicle * v = sim->vehicles; v < sim->vehicles + sim->n_vehicles; v++){
-        pthread_t t
         v_time * v_time;
         v_time->vehicle = v;
-        v_time = sim->time_increment;
-
-
+        v_time->timestep = sim->time_increment;
+        if (pthread_create(&thr[i++], NULL, *entry_function, &v_time)) {
+          fprintf(stderr, ": error creating thread\n");
+        }
       }
+      i--;
+      while (i >= 0) {
+        pthread_join(thr[i--], NULL);
+      }
+      // pthread_join()
 
       usleep(sim->time_increment*1e6); // sleep for roughly the time increment so we get quasi-realtime behavior
       t = clock() - t;

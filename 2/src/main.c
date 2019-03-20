@@ -7,6 +7,8 @@
 #include "simulator.h"
 #include "vehicle.h"
 
+void run_threaded(struct t_simulator * sim);
+
 int main(int argc, char *argv[])
 {
     // this launches the display server (in a separate process)
@@ -28,6 +30,12 @@ int main(int argc, char *argv[])
         sim->vehicles[i] = *vehicle;
         free(vehicle);
     }
+    if (strcmp(argv[1], "--threaded") == 0) {
+      sim->run = &run_threaded;
+    }
+    // else {
+    //   sim->run(sim);
+    // }
     sim->run(sim);
     printf("press any key to kill the program\n");
     getchar();
