@@ -54,20 +54,24 @@ int test_controller(int i) {
       return -1;
   }
 
-  int test_update() {
-    double starting_pos[3] = {50, 99, M_PI_2};
-    double ** offset = malloc(sizeof(double*));
-    offset[0] = malloc(2*sizeof(double));
-    offset[0][0] = 10;
-    offset[0][1] = 20;
-    vehicle * v = create_vehicle(starting_pos, 1, offset);
-    // v->update_state(v, 0.1);
-    // if (v->position[1] == 100.0) return 0;
-    return -1;
-  }
 
   // if (control.angular_velocity > 0) {
   //   return 0;
   // }
   // else return -1;
 }
+
+  int test_update() {
+    double starting_pos[3] = {99.9, 99.9, M_PI_2};
+    double ** offset = malloc(sizeof(double*));
+    offset[0] = malloc(2*sizeof(double));
+    offset[0][0] = 0;
+    offset[0][1] = 20;
+    vehicle * v = create_vehicle(starting_pos, 1, offset);
+    double values[3] = {0, 5, 0};
+    v->set_velocity(v, values);
+
+    v->update_state(v, 1);
+    if (v->position[1] == 100.0) return 0;
+    return -1;
+  }
