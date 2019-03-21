@@ -19,7 +19,8 @@ add_definitions(-DPORTNUM=1635 -DIP="127.0.0.1")
 
 # create the executable
 add_executable(main src/main.c ${SimulatorFiles})
-target_link_libraries(main m)
+#target_link_libraries(main m)
+target_link_libraries(main m pthread rt) 
 #add_executable(test_controller tests/test_controller.c ${SimulatorFiles})
 #target_link_libraries(test_controller m) 
 
