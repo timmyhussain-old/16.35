@@ -7,7 +7,7 @@
 #include "simulator.h"
 #include "vehicle.h"
 
-void run_threaded(struct t_simulator * sim);
+// void run_threaded(struct t_simulator * sim);
 
 int main(int argc, char *argv[])
 {
@@ -19,9 +19,17 @@ int main(int argc, char *argv[])
     sleep(1);
     // create the simulator
     simulator * sim = create_simulator();
+    printf("%s", argv[1]);
+    if (argv[1] == NULL) {
+      sim->set_run(sim, 0);
+    }
+    else {
+      sim->set_run(sim, 1);
+    }
+
     printf("quit the program - 'q'\n");
     // create 3 vehicles and add them to the simulator
-    sim->n_vehicles = 3;
+    sim->n_vehicles = 1;
     sim->vehicles = malloc(sim->n_vehicles * sizeof(vehicle));
     for (int i = 0; i < sim->n_vehicles; i++) {
         double pos [3] = {i*10+30,i*10+30,0};
@@ -29,10 +37,9 @@ int main(int argc, char *argv[])
         // creates a copy so we can free the original vehicle after
         sim->vehicles[i] = *vehicle;
         free(vehicle);
+        // printf("argv[1]: %s\n", argv[1]);
     }
-    if (strcmp(argv[1], "--threaded") == 0) {
-      sim->run = &run_threaded;
-    }
+
     // else {
     //   sim->run(sim);
     // }

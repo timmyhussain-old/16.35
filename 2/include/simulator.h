@@ -10,6 +10,7 @@ typedef struct t_simulator{
     double max_time;
     double time_increment;
     double vehicle_update_rate;
+    void (*set_run)(struct t_simulator *, int);
     int num_waypoints;
     int radius;
     double ** offset_waypoints;
@@ -20,5 +21,6 @@ typedef struct t_simulator{
 
 simulator * create_simulator();
 void run(struct t_simulator * sim);
-
+void run_threaded(struct t_simulator * sim);
+void set_run(struct t_simulator * sim, int i);
 #endif
