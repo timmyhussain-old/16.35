@@ -29,7 +29,7 @@ int main(int argc, char *argv[])
 
     printf("quit the program - 'q'\n");
     // create 3 vehicles and add them to the simulator
-    sim->n_vehicles = 1;
+    sim->n_vehicles = 3;
     sim->vehicles = malloc(sim->n_vehicles * sizeof(vehicle));
     for (int i = 0; i < sim->n_vehicles; i++) {
         double pos [3] = {i*10+30,i*10+30,0};
