@@ -7,6 +7,7 @@ CMakeFiles/main.dir/src/client.c.o
  /home/timmy/Documents/16.35/3/src/client.c
 CMakeFiles/main.dir/src/controller.c.o
  ../include/controller.h
+ ../include/simulator.h
  ../include/vehicle.h
  /home/timmy/Documents/16.35/3/src/controller.c
 CMakeFiles/main.dir/src/main.c.o

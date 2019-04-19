@@ -23,6 +23,8 @@ pthread.h
 -
 
 ../include/vehicle.h
+pthread.h
+-
 
 /home/timmy/Documents/16.35/3/src/client.c
 client.h
@@ -59,6 +61,8 @@ stdlib.h
 -
 math.h
 -
+simulator.h
+/home/timmy/Documents/16.35/3/src/simulator.h
 
 /home/timmy/Documents/16.35/3/src/main.c
 stdio.h

@@ -19,11 +19,13 @@ vehicle * create_vehicle(double * starting_position, struct t_simulator * sim){
     v->update_state = &update_state;
     v->run = &vehicle_run;
     v->control_data = NULL;
+    pthread_mutex_init(&v->vehicle_lock, NULL);
     return v;
 }
 // standard vehicle methods
 void set_position   (struct t_vehicle * v,double * values){
     // set the vehicle positions. assumes vehicle is properly initialized.
+    pthread_mutex_lock(&v->vehicle_lock);
     memcpy(v->position,values,3*sizeof(double));
     if (v->position[0] > 100.0) v->position[0] = 100.0;
     if (v->position[1] > 100.0) v->position[1] = 100.0;
@@ -31,6 +33,7 @@ void set_position   (struct t_vehicle * v,double * values){
     if (v->position[0] < 0.0)   v->position[0] = 0.0;
     if (v->position[1] < 0.0)   v->position[1] = 0.0;
     if (v->position[2] < -M_PI) v->position[2] = -M_PI;
+    pthread_mutex_unlock(&v->vehicle_lock);
 }
 void set_velocity   (struct t_vehicle * v,double * values){
     memcpy(v->velocity,values,3*sizeof(double));

@@ -1,9 +1,15 @@
 #ifndef __VEHICLE_H__
 #define __VEHICLE_H__
 
+#include <pthread.h>
+
 struct t_simulator; // forward declaration
 struct t_control;
 typedef struct t_vehicle {
+    int ix;
+
+    pthread_mutex_t vehicle_lock;
+
     double position [3]; // x,y,theta
     double velocity [3]; // dx,dy,dtheta
     void * control_data; // for use by relevant controller.

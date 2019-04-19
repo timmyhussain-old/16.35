@@ -6,6 +6,7 @@ CMakeFiles/main.dir/src/client.c.o: ../include/vehicle.h
 CMakeFiles/main.dir/src/client.c.o: ../src/client.c
 
 CMakeFiles/main.dir/src/controller.c.o: ../include/controller.h
+CMakeFiles/main.dir/src/controller.c.o: ../include/simulator.h
 CMakeFiles/main.dir/src/controller.c.o: ../include/vehicle.h
 CMakeFiles/main.dir/src/controller.c.o: ../src/controller.c
 
